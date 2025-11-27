@@ -1,0 +1,43 @@
+Model:
+    init=Initialization
+    forms*=EventForm
+;
+
+// Inicialización general
+Initialization:
+    'initialize_runtime' '=' status=Boolean
+;
+
+// event_form Academics { ... }
+EventForm:
+    'event_form' requester_type=ID '{'
+        fields*=FieldConfig
+        submit_btn=SubmitButton?
+    '}'
+;
+
+// Configuraciones de cada campo del formulario
+FieldConfig:
+    field_name=ID '{'
+        'visible' '=' visible=Boolean
+        'required' '=' required=Boolean
+        ('label' '=' label=STRING)?
+        ('options' '=' '[' options+=ID[',']* ']')?
+    '}'
+;
+
+// Botón de envío (lo parseamos pero en esta iteración solo lo ignoramos o lo loggeamos)
+SubmitButton:
+    'submit_button' '{'
+        'text' '=' text=STRING
+    '}'
+;
+
+// Booleano sencillo
+Boolean:
+    /yes|no/
+;
+
+// Terminales básicos
+STRING: /"[^"]*"/;
+ID: /[a-zA-Z_][a-zA-Z0-9_]*/;

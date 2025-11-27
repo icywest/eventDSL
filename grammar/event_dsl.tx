@@ -1,0 +1,25 @@
+Model:
+    events*=Event
+;
+
+// Un evento sencillo
+Event:
+    'add' 'event' name=STRING
+    'for' requester_type=RequesterType
+    'campus' campus_id=INT
+    'on' date=DATE
+    'from' start=TIME
+    'to' end=TIME
+    'at' location=STRING
+;
+
+// Tipos de solicitante permitidos
+RequesterType:
+    /Academics|Students/
+;
+
+// Terminales
+DATE: /\d{4}-\d{2}-\d{2}/;
+TIME: /\d{2}:\d{2}/;
+INT:  /\d+/;
+STRING: /"[^"]*"/;
