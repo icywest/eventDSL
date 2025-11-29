@@ -1,0 +1,80 @@
+// Reglas de formulario para Academics y Students
+
+Model:
+    init=Initialization
+    forms+=EventForm
+;
+
+// Inicialización general
+Initialization:
+    'initialize_runtime' '=' status=Boolean
+;
+
+// Un formulario por tipo de solicitante
+EventForm:
+    'event_form' requester_type=RequesterType '{'
+        fields+=FieldConfig
+        submit_btn=SubmitButton?
+    '}'
+;
+
+// Configuración de campos permitidos
+FieldConfig:
+    field_name=FieldName '{'
+        'visible' '=' visible=Boolean
+        'required' '=' required=Boolean
+        ('label' '=' label=STRING)?
+        ('options' '=' '[' options+=LocationOption[',']* ']')?
+    '}'
+;
+
+// Botón de submit (solo decorativo por ahora)
+SubmitButton:
+    'submit_button' '{'
+        'text' '=' text=STRING
+    '}'
+;
+
+// -------------------- Dominios permitidos -------------------- //
+
+// Tipos de solicitante (keywords, no regex)
+RequesterType:
+      'Academics'
+    | 'Students'
+;
+
+// Nombres de campo válidos (keywords, no regex)
+FieldName:
+      'event_name'
+    | 'campus_id'
+    | 'event_date'
+    | 'start_time'
+    | 'end_time'
+    | 'location'
+    | 'requester_unit'
+    | 'description'
+    | 'microphones'
+    | 'tables'
+    | 'chairs'
+    | 'ac_units'
+;
+
+// Opciones válidas para location (keywords, no regex)
+LocationOption:
+      'PellasRoom'
+    | 'NewAuditorium'
+    | 'PoolArea'
+    | 'SB116'
+    | 'LibraryRoom'
+    | 'REC'
+    | 'Other'
+;
+
+// Booleanos controlados
+Boolean:
+      'yes'
+    | 'no'
+;
+
+// Terminales
+STRING: /"[^"]*"/;

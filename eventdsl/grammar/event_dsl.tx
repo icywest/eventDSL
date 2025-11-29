@@ -1,0 +1,37 @@
+Model:
+    events*=Event
+;
+
+// Evento concreto a guardar en BD
+Event:
+    'add' 'event' name=STRING
+    'for' requester_type=RequesterType
+    'campus' campus_id=INT
+    'on' date=DATE
+    'from' start=TIME
+    'to' end=TIME
+    'at' location=LocationOption
+;
+
+// Tipos de solicitante (keywords)
+RequesterType:
+      'Academics'
+    | 'Students'
+;
+
+// Misma lista de locations que en rules_dsl (keywords)
+LocationOption:
+      'PellasRoom'
+    | 'NewAuditorium'
+    | 'PoolArea'
+    | 'SB116'
+    | 'LibraryRoom'
+    | 'REC'
+    | 'Other'
+;
+
+// Terminales
+DATE: /\d{4}-\d{2}-\d{2}/;
+TIME: /\d{2}:\d{2}/;
+INT:  /\d+/;
+STRING: /"[^"]*"/;

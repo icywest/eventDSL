@@ -1,0 +1,619 @@
+/* src/App.css */
+
+:root {
+  --color-cream: #EFECE3;
+  --color-light-blue: #8FABD4;
+  --color-primary-blue: #4A70A9;
+  --color-black: #000000;
+  --color-medium-blue: #5682B1;
+  --color-sky-blue: #739EC9;
+  --color-peach: #FFE8DB;
+  
+  /* Enhanced color palette */
+  --color-deep-blue: #113F67;
+  --color-ocean-blue: #34699A;
+  --color-bright-blue: #58A0C8;
+  --color-yellow: #FDF5AA;
+  
+  /* Dark mode palette */
+  --bg-primary: #0a0e14;
+  --bg-secondary: #141b24;
+  --bg-tertiary: #1a2332;
+  --bg-hover: #243041;
+  --bg-card: linear-gradient(135deg, #1a2332 0%, #141b24 100%);
+  
+  --text-primary: var(--color-cream);
+  --text-secondary: var(--color-bright-blue);
+  --text-muted: #8899aa;
+  
+  --accent-primary: var(--color-ocean-blue);
+  --accent-secondary: var(--color-bright-blue);
+  --accent-deep: var(--color-deep-blue);
+  --accent-yellow: var(--color-yellow);
+  
+  --border-color: rgba(88, 160, 200, 0.2);
+  --border-glow: rgba(88, 160, 200, 0.4);
+  --shadow: rgba(0, 0, 0, 0.4);
+}
+
+/* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* App Container */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navigation Bar */
+.App > div:first-child {
+  background: var(--bg-secondary) !important;
+  border-bottom: 2px solid var(--accent-primary) !important;
+  padding: 1rem 2rem !important;
+  box-shadow: 0 4px 20px rgba(52, 105, 154, 0.3) !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.App > div:first-child::before {
+  content: "📅";
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.App > div:first-child a {
+  color: var(--text-secondary) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  transition: all 0.3s ease !important;
+  padding: 0.65rem 1.5rem !important;
+  border-radius: 8px !important;
+  position: relative !important;
+  margin-right: 0.75rem !important;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  display: inline-block;
+}
+
+.App > div:first-child a::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--accent-yellow);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.App > div:first-child a:hover {
+  color: var(--accent-yellow) !important;
+  background: var(--bg-hover) !important;
+  border-color: var(--accent-secondary) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(88, 160, 200, 0.3);
+}
+
+.App > div:first-child a:hover::before {
+  width: 80%;
+}
+
+/* Active link styling */
+.App > div:first-child a:active {
+  transform: translateY(0);
+}
+
+/* Page Container */
+.page-container,
+div[style*="padding"] {
+  padding: 1.5rem !important;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+  flex: 1;
+}
+
+/* Headings */
+h1, h2, h3 {
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  position: relative;
+  display: inline-block;
+}
+
+h2 {
+  font-size: 1.75rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, var(--accent-yellow) 0%, var(--accent-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 2px;
+}
+
+/* Form Styles - More Compact */
+form {
+  background: var(--bg-card);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 24px var(--shadow), 0 0 0 1px rgba(88, 160, 200, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+form::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent-primary), var(--accent-secondary), var(--accent-yellow));
+}
+
+.form-row {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Requester type selector - More prominent */
+form > div:first-of-type,
+div[style*="marginBottom"] {
+  background: var(--bg-tertiary) !important;
+  padding: 1rem !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--accent-primary) !important;
+  margin-bottom: 1.25rem !important;
+  box-shadow: 0 2px 8px rgba(52, 105, 154, 0.2);
+}
+
+label {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+input,
+select,
+textarea {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.6rem 0.9rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent-secondary);
+  box-shadow: 0 0 0 3px rgba(88, 160, 200, 0.25), 0 0 20px rgba(88, 160, 200, 0.15);
+  background: var(--bg-hover);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2358A0C8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+/* Buttons - More Colorful */
+button {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  color: var(--text-primary);
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(52, 105, 154, 0.4);
+  margin-top: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+button:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+  box-shadow: 0 6px 25px rgba(88, 160, 200, 0.5);
+  transform: translateY(-2px);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Messages - More Colorful */
+.error-message,
+p[style*="color: red"] {
+  background: linear-gradient(135deg, rgba(255, 77, 77, 0.15), rgba(255, 100, 100, 0.1)) !important;
+  border-left: 4px solid #ff4d4d !important;
+  border: 1px solid rgba(255, 77, 77, 0.3) !important;
+  color: #ffaaaa !important;
+  padding: 0.875rem 1rem !important;
+  border-radius: 8px !important;
+  margin: 1rem 0 !important;
+  box-shadow: 0 4px 12px rgba(255, 77, 77, 0.2);
+}
+
+.success-message,
+p[style*="color: green"] {
+  background: linear-gradient(135deg, rgba(88, 160, 200, 0.2), rgba(52, 105, 154, 0.15)) !important;
+  border-left: 4px solid var(--accent-yellow) !important;
+  border: 1px solid var(--accent-secondary) !important;
+  color: var(--accent-yellow) !important;
+  padding: 0.875rem 1rem !important;
+  border-radius: 8px !important;
+  margin: 1rem 0 !important;
+  box-shadow: 0 4px 12px rgba(88, 160, 200, 0.3);
+  font-weight: 600;
+}
+
+/* Table Styles - More Colorful */
+table {
+  width: 100%;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 24px var(--shadow), 0 0 0 1px rgba(88, 160, 200, 0.1);
+  border-collapse: collapse;
+  position: relative;
+}
+
+table::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent-primary), var(--accent-secondary), var(--accent-yellow));
+}
+
+thead {
+  background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--accent-deep) 100%);
+}
+
+th {
+  color: var(--accent-yellow);
+  font-weight: 700;
+  text-align: left;
+  padding: 0.875rem 1rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 2px solid var(--accent-primary);
+}
+
+td {
+  padding: 0.875rem 1rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.9rem;
+}
+
+tbody tr {
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+tbody tr::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent-secondary);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+tbody tr:hover {
+  background: var(--bg-hover);
+  box-shadow: inset 0 0 20px rgba(88, 160, 200, 0.1);
+}
+
+tbody tr:hover::before {
+  opacity: 1;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Alternating row colors for better readability */
+tbody tr:nth-child(even) {
+  background: rgba(17, 63, 103, 0.15);
+}
+
+/* Dynamic Form Specific */
+.dynamic-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Loading States - More Colorful */
+p:not([style]) {
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 0.75rem 1rem;
+  background: rgba(88, 160, 200, 0.1);
+  border-radius: 6px;
+  border-left: 3px solid var(--accent-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .App > div:first-child {
+    padding: 0.875rem 1rem !important;
+    flex-wrap: wrap;
+  }
+  
+  .App > div:first-child a {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.9rem !important;
+    margin-right: 0.5rem !important;
+    margin-bottom: 0.5rem;
+  }
+  
+  div[style*="padding"] {
+    padding: 1rem !important;
+  }
+  
+  form {
+    padding: 1.25rem;
+  }
+  
+  .form-row {
+    margin-bottom: 0.875rem;
+  }
+  
+  table {
+    font-size: 0.85rem;
+  }
+  
+  th, td {
+    padding: 0.625rem 0.5rem;
+  }
+}
+
+/* Scrollbar Styling - More Colorful */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 5px;
+  border: 2px solid var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--accent-secondary), var(--accent-yellow));
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+form, table {
+  animation: fadeIn 0.4s ease;
+}
+
+.App > div:first-child a {
+  animation: slideIn 0.3s ease backwards;
+}
+
+.App > div:first-child a:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.App > div:first-child a:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+/* Focus Visible for Accessibility */
+*:focus-visible {
+  outline: 2px solid var(--accent-yellow);
+  outline-offset: 2px;
+}
+
+/* Glow effect on interactive elements */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  box-shadow: 0 0 0 3px rgba(253, 245, 170, 0.3);
+}
+
+/* Navigation Bar */
+.main-nav {
+  background: var(--bg-secondary) !important;
+  border-bottom: 2px solid var(--accent-primary) !important;
+  padding: 1rem 2rem !important;
+  box-shadow: 0 4px 20px rgba(52, 105, 154, 0.3) !important;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.main-nav::before {
+  content: "📅";
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+.main-nav a {
+  color: var(--text-secondary) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  transition: all 0.3s ease !important;
+  padding: 0.65rem 1.5rem !important;
+  border-radius: 8px !important;
+  position: relative !important;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  display: inline-block;
+  margin: 0 !important;
+}
+
+.main-nav a::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--accent-yellow);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.main-nav a:hover {
+  color: var(--accent-yellow) !important;
+  background: var(--bg-hover) !important;
+  border-color: var(--accent-secondary) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(88, 160, 200, 0.3);
+}
+
+.main-nav a:hover::before {
+  width: 80%;
+}
+
+.main-nav a:active {
+  transform: translateY(0);
+}
+
+/* Active link - using React Router's active class */
+.main-nav a.active {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: var(--text-primary) !important;
+  border-color: var(--accent-secondary);
+  box-shadow: 0 4px 15px rgba(88, 160, 200, 0.4);
+}
+
+/* Remove old App > div:first-child styles */
+.App > div:first-child {
+  all: unset;
+}

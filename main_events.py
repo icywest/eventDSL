@@ -1,4 +1,3 @@
-# main_events.py
 import sys
 import os
 
