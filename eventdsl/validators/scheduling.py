@@ -29,7 +29,6 @@ def _parse_time_to_minutes(time_str: str) -> int:
 def validate_event_scheduling(
     name: str,
     requester_type: str,
-    campus_id: int,
     date: str,
     start_time: str,
     end_time: str,
@@ -40,7 +39,7 @@ def validate_event_scheduling(
 
     - start_time < end_time
     - duración mínima 60 minutos
-    - no traslape con otros eventos en mismo campus/fecha/location
+    - no traslape con otros eventos en misma fecha/location
     """
 
     # 1) Formato y orden de horas
@@ -60,8 +59,8 @@ def validate_event_scheduling(
             f"Current duration: {duration} minutes."
         )
 
-    # 3) Conflictos con otros eventos
-    existing_events = get_events_for_date_location(campus_id, date, location)
+    # 3) Conflictos con otros eventos en misma fecha/location
+    existing_events = get_events_for_date_location(date, location)
 
     conflicts = []
     for ev in existing_events:
@@ -69,11 +68,11 @@ def validate_event_scheduling(
             ev_id,
             ev_name,
             ev_requester,
-            ev_campus,
             ev_date,
             ev_start,
             ev_end,
             ev_location,
+            ev_requester_unit,
         ) = ev
 
         ev_start_min = _parse_time_to_minutes(ev_start)
@@ -82,9 +81,10 @@ def validate_event_scheduling(
         # traslape si NO se cumple: new_end <= ev_start OR new_start >= ev_end
         overlap = not (end_min <= ev_start_min or start_min >= ev_end_min)
         if overlap:
+            extra = f", {ev_requester_unit}" if ev_requester_unit else ""
             conflicts.append(
                 f"- [{ev_id}] {ev_date} {ev_start}-{ev_end} | {ev_name} "
-                f"({ev_requester}, Campus {ev_campus}) @ {ev_location}"
+                f"({ev_requester}{extra} @ {ev_location})"
             )
 
     if conflicts:

@@ -1,25 +1,26 @@
 Model:
-    events*=Event
+    events+=Event
 ;
 
-// Evento concreto a guardar en BD
+// Evento concreto a guardar en BD / JSON / calendar
 Event:
     'add' 'event' name=STRING
     'for' requester_type=RequesterType
-    'campus' campus_id=INT
+    ('requested_by' requester_unit=RequesterUnitOption)?
     'on' date=DATE
     'from' start=TIME
     'to' end=TIME
     'at' location=LocationOption
+    ('description' description=STRING)?
 ;
 
-// Tipos de solicitante (keywords)
+// Tipos de solicitante (matching con rules_dsl)
 RequesterType:
       'Academics'
     | 'Students'
 ;
 
-// Misma lista de locations que en rules_dsl (keywords)
+// Locations (matching con rules_dsl)
 LocationOption:
       'PellasRoom'
     | 'NewAuditorium'
@@ -28,6 +29,38 @@ LocationOption:
     | 'LibraryRoom'
     | 'REC'
     | 'Other'
+;
+
+// Unidades / clubes (matching con rules_dsl)
+RequesterUnitOption:
+      'BusinessClub'
+    | 'PsychologyClub'
+    | 'PoliticsAndDebateClub'
+    | 'SoftwareClub'
+    | 'MathAndScienceClub'
+    | 'MarketingClub'
+    | 'GamingClub'
+    | 'VerdeTeQuieroVerdeClub'
+    | 'MusicClub'
+    | 'CreativePadClub'
+    | 'GymClub'
+    | 'LArcheClub'
+    | 'DanceHawksOrganization'
+    | 'ShiningStarsOrganization'
+    | 'AnythingIsPawsibleVolunteering'
+    | 'TutoringProgram'
+    | 'PilasPuestas'
+    | 'AEISEC'
+    | 'MissionTrip'
+    | 'GuadalupeProject'
+    | 'ConsecrationToJesusThruMary'
+    | 'RosaMistica'
+    | 'TheNewCovenant'
+    | 'InciensoDeDios'
+    | 'Angelus'
+    | 'XthLegionOfChrist'
+    | 'GuardiansOfTheSacredHeart'
+    | 'FellowshipOfTheCross'
 ;
 
 // Terminales

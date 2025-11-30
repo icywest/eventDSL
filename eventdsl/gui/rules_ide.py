@@ -1,178 +1,19 @@
+import os
+import sys
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
-from textx.exceptions import TextXError 
+CODE_ROOT = os.path.dirname(os.path.dirname(__file__))
+if CODE_ROOT not in sys.path:
+    sys.path.append(CODE_ROOT)
+
+from textx.exceptions import TextXError
 from parsers.rules import parse_rules_from_text
 from db import init_db, list_form_rules
 
-DEFAULT_DSL_TEMPLATE = """initialize_runtime = yes
-
-event_form Academics {
-    event_name {
-        visible  = yes
-        required = yes
-        label    = "Event Title"
-    }
-
-    campus_id {
-        visible  = yes
-        required = yes
-        label    = "Campus ID"
-    }
-
-    event_date {
-        visible  = yes
-        required = yes
-        label    = "Date of the Event"
-    }
-
-    start_time {
-        visible  = yes
-        required = yes
-        label    = "Start Time"
-    }
-
-    end_time {
-        visible  = yes
-        required = yes
-        label    = "End Time"
-    }
-
-    location {
-        visible  = yes
-        required = yes
-        label    = "Location"
-        options  = [PellasRoom, NewAuditorium, PoolArea, SB116, LibraryRoom, REC, Other]
-    }
-
-    requester_unit {
-        visible  = yes
-        required = no
-        label    = "Requesting Unit"
-    }
-
-    description {
-        visible  = yes
-        required = no
-        label    = "Description"
-    }
-
-    microphones {
-        visible  = yes
-        required = no
-        label    = "Microphones (qty)"
-    }
-
-    tables {
-        visible  = yes
-        required = no
-        label    = "Tables (qty)"
-    }
-
-    chairs {
-        visible  = yes
-        required = no
-        label    = "Chairs (qty)"
-    }
-
-    ac_units {
-        visible  = yes
-        required = no
-        label    = "AC units (qty)"
-    }
-
-    submit_button {
-        text = "Request Academic Event"
-    }
-}
-
-event_form Students {
-    event_name {
-        visible  = yes
-        required = yes
-        label    = "Event Name"
-    }
-
-    campus_id {
-        visible  = yes
-        required = yes
-        label    = "Campus ID"
-    }
-
-    event_date {
-        visible  = yes
-        required = yes
-        label    = "Event Date"
-    }
-
-    start_time {
-        visible  = yes
-        required = yes
-        label    = "Start Time"
-    }
-
-    end_time {
-        visible  = yes
-        required = yes
-        label    = "End Time"
-    }
-
-    location {
-        visible  = yes
-        required = yes
-        label    = "Location"
-        options  = [REC, LibraryRoom, Other]
-    }
-
-    requester_unit {
-        visible  = yes
-        required = no
-        label    = "Student Group / Club"
-    }
-
-    description {
-        visible  = yes
-        required = no
-        label    = "Description"
-    }
-
-    microphones {
-        visible  = yes
-        required = no
-        label    = "Microphones (qty)"
-    }
-
-    tables {
-        visible  = yes
-        required = no
-        label    = "Tables (qty)"
-    }
-
-    chairs {
-        visible  = yes
-        required = no
-        label    = "Chairs (qty)"
-    }
-
-    ac_units {
-        visible  = yes
-        required = no
-        label    = "AC units (qty)"
-    }
-
-    submit_button {
-        text = "Request Student Event"
-    }
-}
-"""
 
 
 class RulesIDE(tk.Tk):
-    """
-    Ventana para el Domain Expert:
-    - Tab 1: Editor DSL
-    - Tab 2: Viewer de reglas guardadas en BD
-    """
 
     def __init__(self):
         super().__init__()
@@ -215,8 +56,6 @@ class RulesIDE(tk.Tk):
         )
         scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
         self.text.configure(yscrollcommand=scroll_y.set)
-
-        self.text.insert("1.0", DEFAULT_DSL_TEMPLATE)
 
         # ------- Tab 2: Rules Viewer -------
         viewer_frame = ttk.Frame(notebook)

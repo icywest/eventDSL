@@ -237,7 +237,6 @@ class AddEventApp(tk.Tk):
         # Mapear a columnas de events
         try:
             name = values.get("event_name", "").strip()
-            campus_id_raw = values.get("campus_id", "").strip()
             event_date = values.get("event_date", "").strip()
             start_time = values.get("start_time", "").strip()
             end_time = values.get("end_time", "").strip()
@@ -246,9 +245,6 @@ class AddEventApp(tk.Tk):
             if not name:
                 raise ValueError("event_name is required in the DSL for this form.")
 
-            if not campus_id_raw:
-                raise ValueError("campus_id is required in the DSL for this form.")
-            campus_id = int(campus_id_raw)
 
         except ValueError as e:
             messagebox.showerror("Validation error", str(e))
@@ -259,7 +255,6 @@ class AddEventApp(tk.Tk):
             validate_event_scheduling(
                 name=name,
                 requester_type=requester_type,
-                campus_id=campus_id,
                 date=event_date,
                 start_time=start_time,
                 end_time=end_time,
@@ -277,7 +272,6 @@ class AddEventApp(tk.Tk):
             save_event(
                 name=name,
                 requester_type=requester_type,
-                campus_id=campus_id,
                 date=event_date,
                 start_time=start_time,
                 end_time=end_time,

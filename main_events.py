@@ -14,10 +14,10 @@ def print_all_events():
     print("\nEventos en la base de datos:")
     print("-" * 60)
     for ev in events:
-        ev_id, name, requester_type, campus_id, date, start, end, location = ev
+        ev_id, name, requester_type, date, start, end, location = ev
         print(
             f"[{ev_id}] {date} {start}-{end} | {name} "
-            f"({requester_type}, Campus {campus_id}) @ {location}"
+            f"({requester_type}, @ {location}"
         )
 
 

@@ -1,5 +1,11 @@
 import os
+import sys
 from textx import metamodel_from_file
+
+# Añadir raíz de código (eventdsl\ interno) al sys.path
+CODE_ROOT = os.path.dirname(os.path.dirname(__file__))  # ...\eventdsl\
+if CODE_ROOT not in sys.path:
+    sys.path.append(CODE_ROOT)
 
 from db import init_db, save_event
 from validators.scheduling import (
@@ -29,7 +35,6 @@ def parse_and_save_events(dsl_file_path: str):
     for ev in model.events:
         name = ev.name
         requester_type = ev.requester_type
-        campus_id = int(ev.campus_id)
         date = ev.date
         start_time = ev.start
         end_time = ev.end
@@ -39,7 +44,6 @@ def parse_and_save_events(dsl_file_path: str):
             validate_event_scheduling(
                 name=name,
                 requester_type=requester_type,
-                campus_id=campus_id,
                 date=date,
                 start_time=start_time,
                 end_time=end_time,
@@ -48,7 +52,7 @@ def parse_and_save_events(dsl_file_path: str):
         except SchedulingValidationError as e:
             raise SchedulingValidationError(
                 f"Error in event '{name}' on {date} {start_time}-{end_time} "
-                f"({requester_type}, Campus {campus_id} @ {location}):\n{e}"
+                f"({requester_type} @ {location}):\n{e}"
             )
 
     # Si todos son válidos, guardar
@@ -56,7 +60,6 @@ def parse_and_save_events(dsl_file_path: str):
         save_event(
             name=ev.name,
             requester_type=ev.requester_type,
-            campus_id=int(ev.campus_id),
             date=ev.date,
             start_time=ev.start,
             end_time=ev.end,

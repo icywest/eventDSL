@@ -1,52 +1,103 @@
-// Reglas de formulario para Academics y Students
+// =======================================================
+// Event Request Rules DSL
+// - Configura formularios por tipo de solicitante
+// - Define visibilidad, obligatoriedad y opciones de campos
+// - Declara reglas de negocio de agendado (horarios, anticipación, etc.)
+// =======================================================
 
 Model:
-    init=Initialization
+    init=Initialization?
     forms+=EventForm
 ;
 
-// Inicialización general
+// Inicialización general del runtime
 Initialization:
     'initialize_runtime' '=' status=Boolean
 ;
 
-// Un formulario por tipo de solicitante
+// -------------------------------------------------------
+// Formulario por tipo de solicitante (Academics / Students)
+// -------------------------------------------------------
 EventForm:
     'event_form' requester_type=RequesterType '{'
         fields+=FieldConfig
+        rules_block=RulesBlock?
         submit_btn=SubmitButton?
     '}'
 ;
 
-// Configuración de campos permitidos
+// Configuración de un campo del formulario
 FieldConfig:
     field_name=FieldName '{'
         'visible' '=' visible=Boolean
         'required' '=' required=Boolean
         ('label' '=' label=STRING)?
-        ('options' '=' '[' options+=LocationOption[',']* ']')?
+        ('options' '=' '[' options+=OptionToken[',']* ']')?
     '}'
 ;
 
-// Botón de submit (solo decorativo por ahora)
+// Bloque de reglas de negocio asociadas a este tipo de solicitante
+RulesBlock:
+    'rules' '{'
+        rules+=Rule
+    '}'
+;
+
+// -------------------------------------------------------
+// Reglas de negocio de agendado
+// (todas son declarativas, sin if/else)
+// -------------------------------------------------------
+
+Rule:
+      TimeWindowRule
+    | LeadTimeRule
+    | MaxDurationRule
+    | AllowedDaysRule
+;
+
+// Rango horario permitido (ej. 08:00–18:00)
+TimeWindowRule:
+    'allow_time' 'from' start=TIME 'to' end=TIME
+;
+
+// Días mínimos de anticipación (ej. 3 días antes)
+LeadTimeRule:
+    'min_days_before' '=' days=INT
+;
+
+// Duración máxima en horas (ej. máximo 4 horas)
+MaxDurationRule:
+    'max_duration_hours' '=' hours=INT
+;
+
+// Días de la semana permitidos para este tipo de solicitante
+AllowedDaysRule:
+    'allow_days' '=' '[' days+=DayOfWeek[',']* ']'
+;
+
+// -------------------------------------------------------
+// Botón de submit (decorativo / UI)
+// -------------------------------------------------------
+
 SubmitButton:
     'submit_button' '{'
         'text' '=' text=STRING
     '}'
 ;
 
-// -------------------- Dominios permitidos -------------------- //
+// -------------------------------------------------------
+// Dominios del lenguaje
+// -------------------------------------------------------
 
-// Tipos de solicitante (keywords, no regex)
+// Tipos de solicitante
 RequesterType:
       'Academics'
     | 'Students'
 ;
 
-// Nombres de campo válidos (keywords, no regex)
+// Campos válidos del formulario
 FieldName:
       'event_name'
-    | 'campus_id'
     | 'event_date'
     | 'start_time'
     | 'end_time'
@@ -56,10 +107,15 @@ FieldName:
     | 'microphones'
     | 'tables'
     | 'chairs'
-    | 'ac_units'
 ;
 
-// Opciones válidas para location (keywords, no regex)
+// Tokens de opciones (para location y requester_unit)
+OptionToken:
+      LocationOption
+    | RequesterUnitOption
+;
+
+// Locations disponibles en KU
 LocationOption:
       'PellasRoom'
     | 'NewAuditorium'
@@ -70,6 +126,49 @@ LocationOption:
     | 'Other'
 ;
 
+// Unidades / clubes / organizaciones solicitantes
+RequesterUnitOption:
+      'BusinessClub'
+    | 'PsychologyClub'
+    | 'PoliticsAndDebateClub'
+    | 'SoftwareClub'
+    | 'MathAndScienceClub'
+    | 'MarketingClub'
+    | 'GamingClub'
+    | 'VerdeTeQuieroVerdeClub'
+    | 'MusicClub'
+    | 'CreativePadClub'
+    | 'GymClub'
+    | 'LArcheClub'
+    | 'DanceHawksOrganization'
+    | 'ShiningStarsOrganization'
+    | 'AnythingIsPawsibleVolunteering'
+    | 'TutoringProgram'
+    | 'PilasPuestas'
+    | 'AEISEC'
+    | 'MissionTrip'
+    | 'GuadalupeProject'
+    | 'ConsecrationToJesusThruMary'
+    | 'RosaMistica'
+    | 'TheNewCovenant'
+    | 'InciensoDeDios'
+    | 'Angelus'
+    | 'XthLegionOfChrist'
+    | 'GuardiansOfTheSacredHeart'
+    | 'FellowshipOfTheCross'
+;
+
+// Días de la semana
+DayOfWeek:
+      'Mon'
+    | 'Tue'
+    | 'Wed'
+    | 'Thu'
+    | 'Fri'
+    | 'Sat'
+    | 'Sun'
+;
+
 // Booleanos controlados
 Boolean:
       'yes'
@@ -77,4 +176,6 @@ Boolean:
 ;
 
 // Terminales
+TIME: /\d{2}:\d{2}/;
+INT:  /\d+/;
 STRING: /"[^"]*"/;

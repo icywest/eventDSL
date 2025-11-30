@@ -337,82 +337,48 @@ p[style*="color: green"] {
 }
 
 /* Table Styles - More Colorful */
-table {
+.events-table {
   width: 100%;
-  background: var(--bg-secondary);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 24px var(--shadow), 0 0 0 1px rgba(88, 160, 200, 0.1);
   border-collapse: collapse;
-  position: relative;
+  /* Quitar esto: table-layout: fixed; */
 }
 
-table::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent-deep), var(--accent-primary), var(--accent-secondary), var(--accent-yellow));
-}
-
-thead {
-  background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--accent-deep) 100%);
-}
-
-th {
-  color: var(--accent-yellow);
-  font-weight: 700;
-  text-align: left;
+/* Alineado más limpio por tipo de columna */
+.events-table th,
+.events-table td {
   padding: 0.875rem 1rem;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  border-bottom: 2px solid var(--accent-primary);
-}
-
-td {
-  padding: 0.875rem 1rem;
-  color: var(--text-primary);
-  border-bottom: 1px solid var(--border-color);
   font-size: 0.9rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-tbody tr {
-  transition: all 0.2s ease;
-  position: relative;
+/* centrar columnas cortas */
+.events-table th:nth-child(1),
+.events-table td:nth-child(1),   /* ID */
+.events-table th:nth-child(2),
+.events-table td:nth-child(2),   /* Date */
+.events-table th:nth-child(3),
+.events-table td:nth-child(3),   /* Time */
+.events-table th:nth-child(6) { 
+  text-align: center;
 }
 
-tbody tr::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--accent-secondary);
-  opacity: 0;
-  transition: opacity 0.2s ease;
+/* columnas de texto más largo alineadas a la izquierda */
+.events-table th:nth-child(4),
+.events-table td:nth-child(4),   /* Name */
+.events-table th:nth-child(5),
+.events-table td:nth-child(5),   /* Requester */
+.events-table th:nth-child(7),
+.events-table td:nth-child(7) {  /* Location */
+  text-align: left;
 }
 
-tbody tr:hover {
-  background: var(--bg-hover);
-  box-shadow: inset 0 0 20px rgba(88, 160, 200, 0.1);
-}
-
-tbody tr:hover::before {
-  opacity: 1;
-}
-
-tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* Alternating row colors for better readability */
-tbody tr:nth-child(even) {
-  background: rgba(17, 63, 103, 0.15);
+/* si quieres permitir que se parta en dos líneas en las columnas largas */
+.events-table th:nth-child(4),
+.events-table td:nth-child(4),
+.events-table th:nth-child(7),
+.events-table td:nth-child(7) {
+  white-space: normal;
+  text-overflow: clip;
 }
 
 /* Dynamic Form Specific */
@@ -617,3 +583,4 @@ textarea:focus-visible {
 .App > div:first-child {
   all: unset;
 }
+

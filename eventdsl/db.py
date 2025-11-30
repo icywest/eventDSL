@@ -1,7 +1,7 @@
-# event_dsl/db.py
 import sqlite3
 import os
 import json
+from typing import Optional, List
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "events.db")
 
@@ -20,15 +20,16 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             requester_type TEXT NOT NULL,
-            campus_id INTEGER NOT NULL,
             date TEXT NOT NULL,
             start_time TEXT NOT NULL,
             end_time TEXT NOT NULL,
-            location TEXT NOT NULL
+            location TEXT NOT NULL,
+            requester_unit TEXT
         )
         """
     )
 
+    # Tabla de reglas de formulario
     cursor.execute(
         """
         CREATE TABLE IF NOT EXISTS form_fields (
@@ -49,15 +50,23 @@ def init_db():
 
 # ---------- Eventos ----------
 
-def save_event(name, requester_type, campus_id, date, start_time, end_time, location):
+def save_event(
+    name: str,
+    requester_type: str,
+    date: str,
+    start_time: str,
+    end_time: str,
+    location: str,
+    requester_unit: Optional[str] = None,
+):
     conn = get_conn()
     cursor = conn.cursor()
     cursor.execute(
         """
-        INSERT INTO events (name, requester_type, campus_id, date, start_time, end_time, location)
+        INSERT INTO events (name, requester_type, date, start_time, end_time, location, requester_unit)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """,
-        (name, requester_type, campus_id, date, start_time, end_time, location),
+        (name, requester_type, date, start_time, end_time, location, requester_unit),
     )
     conn.commit()
     conn.close()
@@ -68,10 +77,32 @@ def list_events():
     cursor = conn.cursor()
     cursor.execute(
         """
-        SELECT id, name, requester_type, campus_id, date, start_time, end_time, location
+        SELECT id, name, requester_type, date, start_time, end_time, location, requester_unit
         FROM events
         ORDER BY date, start_time
         """
+    )
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
+
+def get_events_for_date_location(date: str, location: str):
+    """
+    Eventos ya agendados para una fecha/location.
+    Se usa para validar conflictos.
+    """
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT id, name, requester_type, date, start_time, end_time, location, requester_unit
+        FROM events
+        WHERE date = ?
+          AND location = ?
+        ORDER BY start_time
+        """,
+        (date, location),
     )
     rows = cursor.fetchall()
     conn.close()
@@ -93,8 +124,8 @@ def save_form_field_rule(
     field_name: str,
     visible: bool,
     required: bool,
-    label: str | None,
-    options: list[str] | None,
+    label: Optional[str],
+    options: Optional[List[str]],
 ):
     conn = get_conn()
     cursor = conn.cursor()
@@ -135,8 +166,7 @@ def list_form_rules():
 
 def get_form_rules_for_requester(requester_type: str):
     """
-    Devuelve las reglas de campos visibles para un requester_type dado
-    (Academics / Students), ordenadas por id (orden de inserción).
+    Reglas de campos visibles para un requester_type (Academics/Students).
     """
     conn = get_conn()
     cursor = conn.cursor()
@@ -148,28 +178,6 @@ def get_form_rules_for_requester(requester_type: str):
         ORDER BY id
         """,
         (requester_type,),
-    )
-    rows = cursor.fetchall()
-    conn.close()
-    return rows
-
-def get_events_for_date_location(campus_id: int, date: str, location: str):
-    """
-    Devuelve todos los eventos agendados para un campus, fecha y location dados.
-    Se usa para validar conflictos de horario.
-    """
-    conn = get_conn()
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        SELECT id, name, requester_type, campus_id, date, start_time, end_time, location
-        FROM events
-        WHERE campus_id = ?
-          AND date = ?
-          AND location = ?
-        ORDER BY start_time
-        """,
-        (campus_id, date, location),
     )
     rows = cursor.fetchall()
     conn.close()

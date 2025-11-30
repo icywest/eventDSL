@@ -1,5 +1,11 @@
 import os
+import sys
 from textx import metamodel_from_file, TextXError
+
+# Añadir raíz eventdsl\ al sys.path
+CODE_ROOT = os.path.dirname(os.path.dirname(__file__))
+if CODE_ROOT not in sys.path:
+    sys.path.append(CODE_ROOT)
 
 from db import (
     init_db,
@@ -20,7 +26,6 @@ event_rules_mm = metamodel_from_file(GRAMMAR_RULES_PATH)
 # Campos que SIEMPRE deben existir en cada event_form
 MANDATORY_FIELDS = {
     "event_name",
-    "campus_id",
     "event_date",
     "start_time",
     "end_time",
@@ -29,10 +34,13 @@ MANDATORY_FIELDS = {
 
 ALWAYS_REQUIRED_FIELDS = MANDATORY_FIELDS  # por ahora los mismos
 
+# Campos que pueden tener options
 ALLOWED_OPTION_FIELDS = {
     "location",
+    "requester_unit",
 }
 
+# Debe haber forms para ambos tipos
 REQUIRED_REQUESTER_TYPES = {"Academics", "Students"}
 
 
@@ -76,7 +84,7 @@ def validate_model(model):
                 )
             field_map[name] = field
 
-            # 3.2) Solo location puede tener options
+            # 3.2) Solo algunos campos pueden tener options
             has_options = hasattr(field, "options") and bool(
                 getattr(field, "options", [])
             )

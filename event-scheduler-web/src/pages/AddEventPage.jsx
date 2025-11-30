@@ -45,7 +45,6 @@ export default function AddEventPage() {
       const payload = {
         requester_type: requesterType,
         name: values.event_name || "",
-        campus_id: parseInt(values.campus_id || "0", 10),
         date: values.event_date || "",
         start_time: values.start_time || "",
         end_time: values.end_time || "",
