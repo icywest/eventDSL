@@ -2,7 +2,6 @@ Model:
     events+=Event
 ;
 
-// Evento concreto a guardar en BD / JSON / calendar
 Event:
     'add' 'event' name=STRING
     'for' requester_type=RequesterType
@@ -14,13 +13,13 @@ Event:
     ('description' description=STRING)?
 ;
 
-// Tipos de solicitante (matching con rules_dsl)
+// Tipos de solicitante 
 RequesterType:
       'Academics'
     | 'Students'
 ;
 
-// Locations (matching con rules_dsl)
+// Locations 
 LocationOption:
       'PellasRoom'
     | 'NewAuditorium'
@@ -31,7 +30,7 @@ LocationOption:
     | 'Other'
 ;
 
-// Unidades / clubes (matching con rules_dsl)
+// Unidades / clubes 
 RequesterUnitOption:
       'BusinessClub'
     | 'PsychologyClub'

@@ -1,9 +1,19 @@
+# parsers/events.py
+"""
+Parser for the EVENTS DSL (event_dsl.tx).
+
+Responsible for:
+- Loading the textX metamodel for event_dsl.tx.
+- Parsing .evdsl files containing event instances.
+- Validating scheduling constraints for each event.
+- Persisting valid events into the database.
+"""
+
 import os
 import sys
 from textx import metamodel_from_file
 
-# Añadir raíz de código (eventdsl\ interno) al sys.path
-CODE_ROOT = os.path.dirname(os.path.dirname(__file__))  # ...\eventdsl\
+CODE_ROOT = os.path.dirname(os.path.dirname(__file__))
 if CODE_ROOT not in sys.path:
     sys.path.append(CODE_ROOT)
 
@@ -13,6 +23,7 @@ from validators.scheduling import (
     SchedulingValidationError,
 )
 
+# Path to the events grammar
 GRAMMAR_PATH = os.path.join(
     os.path.dirname(__file__),
     "..",
@@ -20,18 +31,22 @@ GRAMMAR_PATH = os.path.join(
     "event_dsl.tx",
 )
 
+# Global metamodel for event_dsl
 event_mm = metamodel_from_file(GRAMMAR_PATH)
 
 
 def parse_and_save_events(dsl_file_path: str):
     """
-    Parsea un .evdsl con eventos, valida scheduling y guarda.
-    Si algún evento viola reglas, se lanza excepción y no se guarda ninguno.
+    Parse a .evdsl file, validate each event according to scheduling rules,
+    and store all of them into the database if and only if every event is valid.
+
+    If any event violates scheduling rules, a SchedulingValidationError is raised
+    and no events are stored (all-or-nothing behavior).
     """
     init_db()
     model = event_mm.model_from_file(dsl_file_path)
 
-    # Validar todos primero
+    # First pass: validate all events
     for ev in model.events:
         name = ev.name
         requester_type = ev.requester_type
@@ -55,7 +70,7 @@ def parse_and_save_events(dsl_file_path: str):
                 f"({requester_type} @ {location}):\n{e}"
             )
 
-    # Si todos son válidos, guardar
+    # Second pass: if all are valid, store them
     for ev in model.events:
         save_event(
             name=ev.name,

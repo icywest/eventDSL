@@ -1,8 +1,17 @@
+# parsers/rules.py
+"""
+Parser and validator for the EVENT RULES DSL (event_rules_dsl.tx).
+
+Responsibilities:
+- Load the textX metamodel for event_rules_dsl.tx.
+- Apply semantic validation rules on the parsed model.
+- Persist the resulting form configuration into the database.
+"""
+
 import os
 import sys
 from textx import metamodel_from_file, TextXError
 
-# Añadir raíz eventdsl\ al sys.path
 CODE_ROOT = os.path.dirname(os.path.dirname(__file__))
 if CODE_ROOT not in sys.path:
     sys.path.append(CODE_ROOT)
@@ -14,6 +23,7 @@ from db import (
     list_form_rules,
 )
 
+# Path to the rules grammar
 GRAMMAR_RULES_PATH = os.path.join(
     os.path.dirname(__file__),
     "..",
@@ -21,9 +31,10 @@ GRAMMAR_RULES_PATH = os.path.join(
     "event_rules_dsl.tx",
 )
 
+# Global metamodel for event_rules_dsl
 event_rules_mm = metamodel_from_file(GRAMMAR_RULES_PATH)
 
-# Campos que SIEMPRE deben existir en cada event_form
+# Fields that must exist in every event_form
 MANDATORY_FIELDS = {
     "event_name",
     "event_date",
@@ -32,25 +43,32 @@ MANDATORY_FIELDS = {
     "location",
 }
 
-ALWAYS_REQUIRED_FIELDS = MANDATORY_FIELDS  # por ahora los mismos
+# Fields that must always be required in every event_form
+ALWAYS_REQUIRED_FIELDS = MANDATORY_FIELDS
 
-# Campos que pueden tener options
+# Fields allowed to define options = [...]
 ALLOWED_OPTION_FIELDS = {
     "location",
     "requester_unit",
 }
 
-# Debe haber forms para ambos tipos
+# Requester types that must have an event_form defined
 REQUIRED_REQUESTER_TYPES = {"Academics", "Students"}
 
 
 def validate_model(model):
     """
-    Reglas semánticas sobre el modelo ya parseado.
-    Lanza TextXError si hay inconsistencias.
-    """
+    Apply semantic validation rules to an already parsed model.
 
-    # 1) initialize_runtime debe ser yes
+    Raises TextXError if any inconsistency is found:
+    - initialize_runtime must be "yes".
+    - Only one event_form per requester_type.
+    - No duplicate fields within the same form.
+    - Only specific fields can define options.
+    - Mandatory fields must exist and be required.
+    - Forms must exist for all required requester types.
+    """
+    # 1) Runtime must be enabled explicitly
     if model.init.status != "yes":
         raise TextXError(
             "initialize_runtime must be 'yes' to enable rules. "
@@ -62,7 +80,7 @@ def validate_model(model):
     for form in model.forms:
         requester = form.requester_type
 
-        # 2) No permitir más de un event_form por requester_type
+        # 2) No more than one form per requester_type
         if requester in seen_requesters:
             raise TextXError(
                 f"Duplicate event_form for requester_type '{requester}'. "
@@ -70,13 +88,13 @@ def validate_model(model):
             )
         seen_requesters.add(requester)
 
-        # 3) Revisar campos del formulario
+        # 3) Per-form field inspection
         field_map = {}
 
         for field in form.fields:
             name = field.field_name
 
-            # 3.1) No duplicar campo en el mismo form
+            # 3.1) No duplicate fields within the same form
             if name in field_map:
                 raise TextXError(
                     f"Duplicate field '{name}' in event_form {requester}. "
@@ -84,7 +102,7 @@ def validate_model(model):
                 )
             field_map[name] = field
 
-            # 3.2) Solo algunos campos pueden tener options
+            # 3.2) Only specific fields are allowed to have 'options'
             has_options = hasattr(field, "options") and bool(
                 getattr(field, "options", [])
             )
@@ -95,7 +113,7 @@ def validate_model(model):
                     f"but only these fields can define options: {allowed_str}."
                 )
 
-            # 3.3) Campos mandatory deben ser required = yes
+            # 3.3) Mandatory fields must be required = yes
             if name in ALWAYS_REQUIRED_FIELDS:
                 if field.required != "yes":
                     raise TextXError(
@@ -103,7 +121,7 @@ def validate_model(model):
                         f"'required = yes' because it is a mandatory field."
                     )
 
-        # 3.4) Verificar mandatory fields existen
+        # 3.4) All mandatory fields must be present
         missing = MANDATORY_FIELDS - set(field_map.keys())
         if missing:
             missing_str = ", ".join(sorted(missing))
@@ -112,7 +130,7 @@ def validate_model(model):
                 f"All of them must be defined in the form."
             )
 
-    # 4) Formularios para todos los requester_types requeridos
+    # 4) There must be forms for all required requester types
     missing_forms = REQUIRED_REQUESTER_TYPES - seen_requesters
     if missing_forms:
         miss_str = ", ".join(sorted(missing_forms))
@@ -124,17 +142,20 @@ def validate_model(model):
 
 def parse_rules_from_text(dsl_text: str) -> int:
     """
-    Parsea DSL de reglas, valida semántica y guarda en BD.
-    Devuelve cuántos event_form se procesaron.
+    Parse rules from a raw DSL string, validate the model,
+    and persist the resulting form configuration into the database.
+
+    Returns:
+        int: Number of event_form blocks processed.
     """
     init_db()
 
     model = event_rules_mm.model_from_str(dsl_text)
 
-    # Validación semántica
+    # Semantic validation over the parsed model
     validate_model(model)
 
-    # Si pasa, limpiamos reglas anteriores y guardamos nuevas
+    # If validation succeeds, existing rules are cleared and new ones are stored
     clear_form_rules()
 
     for form in model.forms:
@@ -163,6 +184,10 @@ def parse_rules_from_text(dsl_text: str) -> int:
 
 
 def debug_print_rules():
+    """
+    Helper to print all form rules currently stored in the database.
+    Useful for manual inspection during development.
+    """
     rules = list_form_rules()
     print("\nForm rules in DB:")
     print("-" * 60)
